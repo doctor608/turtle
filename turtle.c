@@ -2,6 +2,8 @@
 
 #include <ncurses.h>
 
+static void turtle_handle_border_collision(Turtle* t);
+
 void turtle_init(Turtle* t, char body, Color c)
 {
         t->body   = body;;
@@ -15,8 +17,8 @@ void turtle_init(Turtle* t, char body, Color c)
 void turtle_draw(const Turtle* t)
 {
         attron(COLOR_PAIR(t->color));
-		mvdelch(t->prev_y, t->prev_x);
-		mvaddch(t->cur_y, t->cur_x, t->body);
+                mvdelch(t->prev_y, t->prev_x);
+                mvaddch(t->cur_y, t->cur_x, t->body);
         attroff(COLOR_PAIR(t->color));
 }
 
@@ -44,4 +46,18 @@ void turtle_move(Turtle* t, Direction dir)
                 t->cur_x += 1;
                 break;
         }
+
+        turtle_handle_border_collision(t);
+}
+
+static void turtle_handle_border_collision(Turtle* t)
+{
+        if (t->cur_x > COLS)
+                t->cur_x = COLS - 1; // <--  because of cursor
+        else if (t->cur_x < 0)
+                t->cur_x = 0;
+        else if (t->cur_y > LINES)
+                t->cur_y = LINES - 1; // <-- because of cursor
+        else if (t->cur_y < 0)
+                t->cur_y = 0;
 }

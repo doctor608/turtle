@@ -9,6 +9,7 @@ int main(void)
 {
         initscr();  // <-- Initialize ncurses.
         noecho();  // <-- Do not print on the screen.
+        curs_set(0); // <-- hide cursor
 
         color_init();
 
