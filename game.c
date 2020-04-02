@@ -30,22 +30,19 @@ int main(void)
                 /* draw_background(); */
 
                 if ((ch = getch()) != ERR) {
+
                         switch (ch) {
                         case 'h':
-                                t.prev_x = t.cur_x;
-                                --t.cur_x;
+                                turtle_move(&t, LEFT);
                                 break;
                         case 'j':
-                                t.prev_y = t.cur_y;
-                                ++t.cur_y;
+                                turtle_move(&t, DOWN);
                                 break;
                         case 'k':
-                                t.prev_y = t.cur_y;
-                                --t.cur_y;
+                                turtle_move(&t, UP);
                                 break;
                         case 'l':
-                                t.prev_x = t.cur_x;
-                                ++t.cur_x;
+                                turtle_move(&t, RIGHT);
                                 break;
                         }
                 }
