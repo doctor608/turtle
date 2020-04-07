@@ -22,6 +22,27 @@ void turtle_draw(const Turtle* t)
         attroff(COLOR_PAIR(t->color));
 }
 
+void turtle_update(Turtle* t)
+{
+        int ch;
+        if ((ch = getch()) != ERR) {
+                switch (ch) {
+                case 'h':
+                        turtle_move(t, LEFT);
+                        break;
+                case 'j':
+                        turtle_move(t, DOWN);
+                        break;
+                case 'k':
+                        turtle_move(t, UP);
+                        break;
+                case 'l':
+                        turtle_move(t, RIGHT);
+                        break;
+                }
+        }
+}
+
 void turtle_move(Turtle* t, Direction dir)
 {
         switch (dir) {
