@@ -23,7 +23,7 @@ int main(void)
 
         for (;;) {
                 turtle_update(&t);
-                /* turtle_draw(&t); */
+                turtle_draw(&t, game_win.surface);
                 wrefresh(game_win.surface);
                 wrefresh(stats_win.surface);
         }

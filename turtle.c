@@ -14,12 +14,12 @@ void turtle_init(Turtle* t, char body, Color c)
         t->prev_y = LINES / 2;
 }
 
-void turtle_draw(const Turtle* t)
+void turtle_draw(const Turtle* t, WINDOW* surface)
 {
-        attron(COLOR_PAIR(t->color));
-                mvdelch(t->prev_y, t->prev_x);
-                mvaddch(t->cur_y, t->cur_x, t->body);
-        attroff(COLOR_PAIR(t->color));
+        wattron(surface, COLOR_PAIR(t->color));
+        mvwdelch(surface, t->prev_y, t->prev_x);
+        mvwaddch(surface, t->cur_y, t->cur_x, t->body);
+        wattroff(surface, COLOR_PAIR(t->color));
 }
 
 void turtle_update(Turtle* t)
