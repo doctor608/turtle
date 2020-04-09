@@ -1,84 +1,65 @@
 #include "turtle.h"
 
+#include "window.h"
+
 #include <ncurses.h>
 
 static void turtle_handle_border_collision(Turtle* t);
 
-void turtle_init(Turtle* t, char body, Color c)
+void turtle_init(Turtle* t, char body)
 {
-        t->body   = body;;
-        t->color  = c;
-        t->cur_x  = COLS / 2;  // <-- COLS and LINES from ncurses.h
-        t->prev_x = COLS / 2;
-        t->cur_y  = LINES / 2;
-        t->prev_y = LINES / 2;
+        t->body = body;
+        t->x = COLS / 2;
+        t->y = LINES / 2;
+        init_pair(TURTLE_COLOR, COLOR_GREEN, COLOR_BLACK);
 }
 
-void turtle_draw(const Turtle* t, WINDOW* surface)
+void turtle_stats_draw(const Turtle* t, WINDOW* w)
 {
-        wattron(surface, COLOR_PAIR(t->color));
-        mvwdelch(surface, t->prev_y, t->prev_x);
-        mvwaddch(surface, t->cur_y, t->cur_x, t->body);
-        wattroff(surface, COLOR_PAIR(t->color));
+        mvwprintw(w, 1, 2, "x: %i\n", t->x);
+        mvwprintw(w, 2, 2, "y: %i\n", t->y);
 }
 
-void turtle_update(Turtle* t)
+void turtle_draw(const Turtle* t, WINDOW* w)
 {
-        int ch;
-        if ((ch = getch()) != ERR) {
-                switch (ch) {
-                case 'h':
-                        turtle_move(t, LEFT);
-                        break;
-                case 'j':
-                        turtle_move(t, DOWN);
-                        break;
-                case 'k':
-                        turtle_move(t, UP);
-                        break;
-                case 'l':
-                        turtle_move(t, RIGHT);
-                        break;
-                }
-        }
+        wattron(w, COLOR_PAIR(TURTLE_COLOR));
+        mvwaddch(w, t->y, t->x, t->body);
+        wattroff(w, COLOR_PAIR(TURTLE_COLOR));
 }
 
-void turtle_move(Turtle* t, Direction dir)
+void turtle_update(Turtle* t, WINDOW* w)
 {
-        switch (dir) {
-        case LEFT:
-                t->prev_x = t->cur_x;
-                t->prev_y = t->cur_y;
-                t->cur_x -= 1;
+        int ch = getch();
+        switch (ch) {
+        case 'h':
+                mvwaddch(w, t->y, t->x, ' ');
+                t->x -= 1;
                 break;
-        case DOWN:
-                t->prev_y = t->cur_y;
-                t->prev_x = t->cur_x;
-                t->cur_y += 1;
+        case 'j':
+                mvwaddch(w, t->y, t->x, ' ');
+                t->y += 1;
                 break;
-        case UP:
-                t->prev_y = t->cur_y;
-                t->prev_x = t->cur_x;
-                t->cur_y -= 1;
+        case 'k':
+                mvwaddch(w, t->y, t->x, ' ');
+                t->y -= 1;
                 break;
-        case RIGHT:
-                t->prev_x = t->cur_x;
-                t->prev_y = t->cur_y;
-                t->cur_x += 1;
+        case 'l':
+                mvwaddch(w, t->y, t->x, ' ');
+                t->x += 1;
                 break;
         }
-
         turtle_handle_border_collision(t);
 }
 
 static void turtle_handle_border_collision(Turtle* t)
 {
-        if (t->cur_x > COLS)
-                t->cur_x = COLS - 1; // <--  because of cursor
-        else if (t->cur_x < 0)
-                t->cur_x = 0;
-        else if (t->cur_y > LINES)
-                t->cur_y = LINES - 1; // <-- because of cursor
-        else if (t->cur_y < 0)
-                t->cur_y = 0;
+        // All minuses because of windows' borders
+        if (t->x >= GAME_WIN_WIDTH - 1)
+                t->x = GAME_WIN_WIDTH - 2;
+        else if (t->x <= 0)
+                t->x = 1;
+        else if (t->y >= GAME_WIN_HEIGHT - 1)
+                t->y = GAME_WIN_HEIGHT - 2;
+        else if (t->y <= 0)
+                t->y = 1;
 }
