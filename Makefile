@@ -10,5 +10,10 @@ window.o: window.c
 console.o: console.c
 	gcc -c $(C_FLAGS) $^ $(C_LIBS)
 
-turtle: main.c turtle.o window.o console.o
+menu.o: menu.c
+	gcc -c $(C_FLAGS) $^ $(C_LIBS)
+
+turtle: main.c turtle.o window.o console.o menu.o
 	gcc $(C_FLAGS) $^ $(C_LIBS) -o $@
+
+
