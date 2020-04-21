@@ -14,17 +14,17 @@ void turtle_init(Turtle* t, char body)
         init_pair(TURTLE_COLOR, COLOR_GREEN, COLOR_BLACK);
 }
 
-void turtle_stats_draw(const Turtle* t, WINDOW* w)
-{
-        mvwprintw(w, 1, 2, "x: %i\n", t->x);
-        mvwprintw(w, 2, 2, "y: %i\n", t->y);
-}
-
 void turtle_draw(const Turtle* t, WINDOW* w)
 {
         wattron(w, COLOR_PAIR(TURTLE_COLOR));
         mvwaddch(w, t->y, t->x, t->body);
         wattroff(w, COLOR_PAIR(TURTLE_COLOR));
+}
+
+void turtle_stats_draw(const Turtle* t, WINDOW* w)
+{
+        mvwprintw(w, 1, 2, "x: %i\n", t->x);
+        mvwprintw(w, 2, 2, "y: %i\n", t->y);
 }
 
 void turtle_update(Turtle* t, WINDOW* w)

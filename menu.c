@@ -2,17 +2,12 @@
 
 #include <ncurses.h>
 
+#include <stdbool.h>
 #include <string.h>
 
 WINDOW* menu_win = NULL;
 
-#define MENU_WIDTH 20
-#define MENU_HEIGHT MENU_CHOICES_NUM + 2
-#define MENU_CHOICES_NUM 3
-#define MENU_X COLS / 2 - MENU_WIDTH / 2
-#define MENU_Y LINES / 2
-
-static int indent_count(int width, const char* s);
+static int center_text(int width, const char* s);
 
 void menu_init()
 {
@@ -21,22 +16,28 @@ void menu_init()
 
 MenuChoice menu_mainloop()
 {
-        int choice;
-        int highlight = 0;
-        const char* menu_choices[MENU_CHOICES_NUM] = { "play", "settings", "exit" };
+        int choice = 0;
+        int highlighted_choice = 0;
 
-        mvprintw(MENU_Y - 1, MENU_X + indent_count(MENU_WIDTH, "MENU"), "MENU");
+        const char* menu_choices[] = {
+            "play",
+            "settings",
+            "exit",
+        };
+
+        // Draw MENU_TITLE
+        mvprintw(MENU_Y-1, MENU_X+center_text(MENU_WIDTH, MENU_TITLE), MENU_TITLE);
         refresh();
 
-        while (1) {
-                box(menu_win, 0, 0);
-                wrefresh(menu_win);
+        bool menu_run = true;
+        while (menu_run) {
 
-                for (int i = 0; i < MENU_CHOICES_NUM; ++i) {
-                        if (i == highlight)
+                box(menu_win, 0, 0);
+                for (int i = 0; i < MENU_LENGTH; ++i) {
+                        if (i == highlighted_choice)
                                 wattron(menu_win, A_REVERSE);
-                        mvwprintw(menu_win, i + 1, indent_count(MENU_WIDTH, menu_choices[i]),
-                                  menu_choices[i]);
+                        wmove(menu_win, i+1, center_text(MENU_WIDTH, menu_choices[i]));
+                        wprintw(menu_win, menu_choices[i]);
                         wattroff(menu_win, A_REVERSE);
                 }
                 wrefresh(menu_win);
@@ -44,25 +45,24 @@ MenuChoice menu_mainloop()
                 choice = wgetch(menu_win);
                 switch (choice) {
                 case 'j':
-                        highlight++;
-                        if (highlight >= MENU_CHOICES_NUM)
-                                highlight = MENU_CHOICES_NUM - 1;
+                        ++highlighted_choice;
+                        if (highlighted_choice >= MENU_LENGTH)
+                                highlighted_choice = MENU_LENGTH - 1;
                         break;
                 case 'k':
-                        highlight--;
-                        if (highlight < 0)
-                                highlight = 0;
+                        --highlighted_choice;
+                        if (highlighted_choice < 0)
+                                highlighted_choice = 0;
                         break;
+                case '\n':
+                        menu_run = false;
                 }
-
-                if (choice == ' ')
-                        break;
         }
 
-        return (MenuChoice) highlight;
+        return (MenuChoice) highlighted_choice;
 }
 
-static int indent_count(int width, const char* s)
+static int center_text(int width, const char* s)
 {
         return (width - strlen(s)) / 2;
 }

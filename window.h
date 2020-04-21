@@ -9,6 +9,6 @@
 #define STATS_WIN_WIDTH  COLS / 2
 #define STATS_WIN_HEIGHT LINES / 4
 
-void win_draw(WINDOW* w);
+void window_update(WINDOW* w);
 
 #endif
