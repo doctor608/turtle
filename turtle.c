@@ -9,14 +9,14 @@ static void turtle_clear(Turtle* t);
 static void turtle_handle_border_collision(Turtle* t);
 
 /* Constructor. */
-void turtle_init(Turtle* t, const char* skin_filename)
+void turtle_init(Turtle* t, const char* skin_filename, int color)
 {
         t->x = COLS / 2 - 3;
         t->y = LINES - 10;
+        t->vel = 2;
         t->width = 0;
         t->height = 1;
-        t->color = 1;
-        init_pair(t->color, COLOR_GREEN, COLOR_BLACK);
+        t->color = color;
 
         FILE* skin_file = fopen(skin_filename, "r");
         if (!skin_file) {
@@ -81,19 +81,19 @@ void turtle_update(Turtle* t, int ch)
         switch (ch) {
         case 'h':
                 turtle_clear(t);
-                t->x -= 1;
+                t->x -= t->vel;
                 break;
         case 'j':
                 turtle_clear(t);
-                t->y += 1;
+                t->y += t->vel;
                 break;
         case 'k':
                 turtle_clear(t);
-                t->y -= 1;
+                t->y -= t->vel;
                 break;
         case 'l':
                 turtle_clear(t);
-                t->x += 1;
+                t->x += t->vel;
                 break;
         }
         turtle_handle_border_collision(t);
@@ -102,12 +102,12 @@ void turtle_update(Turtle* t, int ch)
 static void turtle_handle_border_collision(Turtle* t)
 {
         // All minuses because of windows' borders
-        if (t->x >= COLS - 1)
-                t->x = COLS - 2;
-        else if (t->x <= 0)
+        if (t->x >= COLS - t->width - 1)
+                t->x = COLS - t->width - 1;
+        if (t->x <= 0)
                 t->x = 1;
-        else if (t->y >= LINES - 1)
-                t->y = LINES - 2;
-        else if (t->y <= 0)
+        if (t->y >= LINES - t->height - 1)
+                t->y = LINES - t->height - 1;
+        if (t->y <= 0)
                 t->y = 1;
 }
