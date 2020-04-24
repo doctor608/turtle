@@ -1,5 +1,3 @@
-#include "window.h"
-#include "console.h"
 #include "menu.h"
 #include "turtle.h"
 
@@ -19,32 +17,32 @@ int main(void)
         /* End */
 
         Turtle t;
-        turtle_init(&t);
+        turtle_init(&t, "skins/turtle.txt");
 
         menu_init(); // init menu_win
-
-        WINDOW* game_win = newwin(GAME_WIN_HEIGHT, GAME_WIN_WIDTH, 0, 0);
-
         MenuChoice choice = menu_mainloop();
+        clear();
 
         switch (choice) {
+        case MENU_PLAY: {
+                halfdelay(1);
+                for (;;) {
+                        int ch = getch();
+
+                        turtle_update(&t, ch);
+                        turtle_draw(&t);
+
+                        refresh();
+                }
+        }
+                break;
         case MENU_SETTINGS:
                 break;
         case MENU_EXIT:
                 break;
-        case MENU_PLAY:
-                for (;;) {
-                        halfdelay(1);
-                        int ch = wgetch(game_win);
-
-                        turtle_update(&t, game_win, ch);
-                        turtle_draw(&t, game_win);
-
-                        window_update(game_win);
-                }
-                break;
         }
-
+        
+        turtle_del(&t);
         endwin();
         return EXIT_SUCCESS;
 }
