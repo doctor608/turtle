@@ -7,5 +7,11 @@ turtle.o: turtle.c
 menu.o: menu.c
 	gcc -c $(C_FLAGS) $^ $(C_LIBS)
 
-turtle: main.c turtle.o menu.o
+sprite.o: sprite.c
+	gcc -c $(C_FLAGS) $^ $(C_LIBS)
+
+enemy.o: enemy.c
+	gcc -c $(C_FLAGS) $^ $(C_LIBS)
+
+turtle: main.c turtle.o menu.o sprite.o enemy.o
 	gcc $(C_FLAGS) $^ $(C_LIBS) -o $@

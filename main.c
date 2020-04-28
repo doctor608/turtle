@@ -1,13 +1,23 @@
 #include "menu.h"
 #include "turtle.h"
+#include "enemy.h"
+#include "sprite.h"
+#include "colors.h"
 
 #include <ncurses.h>
 
 #include <stdlib.h>
 #include <string.h>
 
-#define BG_COLOR 10
-#define TURTLE_COLOR 11
+
+void draw_bg(void)
+{
+    attron(COLOR_PAIR(BG_COLOR));
+    for (int y = 0; y < LINES; ++y) {
+        mvhline(y, 0, ' ', COLS);
+    }
+    attroff(COLOR_PAIR(BG_COLOR));
+}
 
 int main(void)
 {
@@ -19,11 +29,20 @@ int main(void)
         start_color();
         /* End */
 
-        init_pair(BG_COLOR, COLOR_GREEN, COLOR_CYAN);
+        init_pair(BG_COLOR, COLOR_BLACK, COLOR_CYAN);
         init_pair(TURTLE_COLOR, COLOR_BLACK, COLOR_CYAN);
+        init_pair(PLATYPUS_COLOR, COLOR_BLACK, COLOR_CYAN);
+        init_pair(STINGRAY_COLOR, COLOR_BLACK, COLOR_CYAN);
 
         Turtle t;
         turtle_init(&t, "skins/turtle.txt", TURTLE_COLOR);
+
+        Enemy st;
+        enemy_init(&st, "skins/stingray.txt", STINGRAY_COLOR);
+
+        Enemy pl;
+        enemy_init(&pl, "skins/platypus.txt", PLATYPUS_COLOR);
+
 
         menu_init(); // init menu_win
         MenuChoice choice = menu_mainloop();
@@ -32,12 +51,17 @@ int main(void)
         switch (choice) {
         case MENU_PLAY: {
                 halfdelay(1);
+                draw_bg();
                 for (;;) {
-                        bkgd(COLOR_PAIR(BG_COLOR));
                         int ch = getch();
 
                         turtle_update(&t, ch);
-                        turtle_draw(&t);
+                        enemy_update(&pl);
+                        enemy_update(&st);
+
+                        sprite_draw(&pl.sprite);
+                        sprite_draw(&st.sprite);
+                        sprite_draw(&t.sprite);
 
                         box(stdscr, 0, 0);
                         refresh();
@@ -51,6 +75,9 @@ int main(void)
         }
         
         turtle_del(&t);
+        // enemy_del(&pl);
+        // enemy_del(&st);
+
         endwin();
         return EXIT_SUCCESS;
 }
